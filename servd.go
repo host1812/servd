@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"time"
+	// "time"
 )
 
 type Page struct {
@@ -17,13 +17,10 @@ type Page struct {
 var templates = template.Must(template.ParseFiles("edit.html", "view.html"))
 
 func main() {
-	// p1 := &Page{Title: "tpage1", Body: []byte("This is simple text page.")}
-	// p1.save()
-	// p2, _ := loadPage("tpage1")
-	// fmt.Println(string(p2.Body))
 	http.HandleFunc("/view/", viewHandler)
 	http.HandleFunc("/edit/", editHandler)
 	http.HandleFunc("/save/", saveHandler)
+	http.HandleFunc("/samplepage/", samplePageHandler)
 	http.ListenAndServe(":8080", nil)
 }
 
@@ -50,6 +47,18 @@ func editHandler(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, "edit", p)
 }
 
+func samplePageHandler(w http.ResponseWriter, r *http.Request) {
+	title := r.URL.Path[len("/sample/"):]
+	p, err := loadPage(title)
+	if err != nil {
+		p = &Page{Title: title}
+	}
+
+	http.SetCookie(w, &http.Cookie{Name: "sample-auth-cokie", Value: "gsaiscool", Path: "/", Domain: "super.local"})
+
+	renderTemplate(w, "view", p)
+}
+
 func viewHandler(w http.ResponseWriter, r *http.Request) {
 	title := r.URL.Path[len("/view/"):]
 	p, err := loadPage(title)
@@ -58,17 +67,18 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/edit/"+title, http.StatusFound)
 		return
 	}
-
-	cookie := &http.Cookie{
-		Name:  "cookie-name",
-		Value: "foo : bar",
-		Path:  "/",
+	requestCookie, err := r.Cookie("sample-auth-cokie")
+	if err != nil {
+		log.Println("no cookie")
+		http.Redirect(w, r, "/samplepage/", http.StatusFound)
+		return
 	}
-
-	http.SetCookie(w, &http.Cookie{"test-name", "test-value", "/", "", time.Now().AddDate(0, 0, 1), time.Now().AddDate(0, 0, 1).Format(time.UnixDate), 86400, true, true, "test=tcookie", []string{"test=tcookie"}})
+	if requestCookie.Value != "gsaiscool" {
+		log.Println("cookie is bad")
+	}
+	// http.SetCookie(w, &http.Cookie{"test-name", "test-value", "/", "", time.Now().AddDate(0, 0, 1), time.Now().AddDate(0, 0, 1).Format(time.UnixDate), 86400, true, true, "test=tcookie", []string{"test=tcookie"}})
 	// http.SetCookie(w, &http.Cookie{"test-name", "test-value", "/", "",)
-	http.SetCookie(w, cookie)
-	http.SetCookie(w, &http.Cookie{Name: "third-cokie", Value: "somestring"})
+	// http.SetCookie(w, cookie)
 	renderTemplate(w, "view", p)
 }
 
