@@ -15,7 +15,7 @@ type Page struct {
 	HTMLbody template.HTML
 }
 
-var templates = template.Must(template.ParseFiles("edit.html", "view.html"))
+var templates = template.Must(template.ParseFiles("templates/edit.html", "templates/view.html"))
 
 func main() {
 	http.HandleFunc("/", defaultHandler)
