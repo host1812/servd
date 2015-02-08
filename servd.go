@@ -50,8 +50,8 @@ func editHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func samplePageHandler(w http.ResponseWriter, r *http.Request) {
-	title := r.URL.Path[len("/sample/"):]
-	p, err := loadPage(title)
+	title := r.URL.Path[len("/samplepage/"):]
+	p, err := loadPage("samplepage")
 	if err != nil {
 		p = &Page{Title: title}
 	}
