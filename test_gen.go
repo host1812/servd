@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	generator.Generate("./words", 2, 0)
+	generator.Generate("/usr/share/dict/words", 50, 0)
 }
