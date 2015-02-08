@@ -18,6 +18,7 @@ type Page struct {
 var templates = template.Must(template.ParseFiles("edit.html", "view.html"))
 
 func main() {
+	http.HandleFunc("/", defaultHandler)
 	http.HandleFunc("/view/", viewHandler)
 	http.HandleFunc("/edit/", editHandler)
 	http.HandleFunc("/save/", saveHandler)
@@ -26,12 +27,12 @@ func main() {
 }
 
 func (p *Page) save() error {
-	filename := p.Title + ".html"
+	filename := p.Title // + ".html"
 	return ioutil.WriteFile(filename, p.Body, 0600)
 }
 
 func loadPage(title string) (*Page, error) {
-	filename := title + ".html"
+	filename := title // + ".html"
 	body, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return nil, err
@@ -80,6 +81,11 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 	// http.SetCookie(w, &http.Cookie{"test-name", "test-value", "/", "", time.Now().AddDate(0, 0, 1), time.Now().AddDate(0, 0, 1).Format(time.UnixDate), 86400, true, true, "test=tcookie", []string{"test=tcookie"}})
 	// http.SetCookie(w, &http.Cookie{"test-name", "test-value", "/", "",)
 	// http.SetCookie(w, cookie)
+	renderTemplate(w, "view", p)
+}
+
+func defaultHandler(w http.ResponseWriter, r *http.Request) {
+	p, _ := loadPage("index")
 	renderTemplate(w, "view", p)
 }
 

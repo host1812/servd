@@ -10,7 +10,7 @@ import (
 	"bufio"
 )
 
-func Generate(wfile string, pcount int, depth int) {
+func Generate(wfile string, pcount int, wcount int) {
 	fmt.Println("start generate content")
 
 	os.RemoveAll("pages")
@@ -18,13 +18,26 @@ func Generate(wfile string, pcount int, depth int) {
 	os.Mkdir("pages", 0764)
 
 	words, _ := readWords(wfile)
+	indexBody := ""
 
-	for i := 0; i < pcount; i++ {
+	for p := 0; p < pcount; p++ {
 		title := words[rand.Intn(len(words)-1)]
 		fmt.Println(title)
-		filename := "pages/" + title + ".html"
-		ioutil.WriteFile(filename, []byte(title), 0600)
+		// filename := "pages/" + title + ".html"
+		filename := "pages/" + title
+
+		// add generated page to 'index' page
+		indexBody += "<a href='/view/" + filename + "'>" + filename + "</a><br />\n"
+
+		pContent := ""
+		for w := 0; w < wcount; w++ {
+			pContent += words[rand.Intn(len(words)-1)] + " "
+		}
+
+		ioutil.WriteFile(filename, []byte(pContent), 0600)
 	}
+
+	ioutil.WriteFile("./index", []byte(indexBody), 0600)
 
 	fmt.Println("finish generate content")
 }
