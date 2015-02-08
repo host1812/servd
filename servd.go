@@ -10,8 +10,9 @@ import (
 )
 
 type Page struct {
-	Title string
-	Body  []byte
+	Title    string
+	Body     []byte
+	HTMLbody template.HTML
 }
 
 var templates = template.Must(template.ParseFiles("edit.html", "view.html"))
@@ -35,7 +36,7 @@ func loadPage(title string) (*Page, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Page{Title: title, Body: body}, nil
+	return &Page{Title: title, Body: body, HTMLbody: template.HTML(body)}, nil
 }
 
 func editHandler(w http.ResponseWriter, r *http.Request) {
