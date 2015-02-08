@@ -1,3 +1,0 @@
-This is simple text page.
-
-<a href="/" >Test Link</a>
