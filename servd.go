@@ -56,13 +56,14 @@ func samplePageHandler(w http.ResponseWriter, r *http.Request) {
 		p = &Page{Title: title}
 	}
 
-	http.SetCookie(w, &http.Cookie{Name: "sample-auth-cokie", Value: "gsaiscool", Path: "/", Domain: "super.local"})
+	http.SetCookie(w, &http.Cookie{Name: "sample-auth-cokie", Value: "gsaiscool", Path: "/", Domain: ".corp.google.com"})
 
 	renderTemplate(w, "view", p)
 }
 
 func viewHandler(w http.ResponseWriter, r *http.Request) {
 	title := r.URL.Path[len("/view/"):]
+	log.Println(r)
 	p, err := loadPage(title)
 	if err != nil {
 		log.Println("'" + title + "' page not exists")

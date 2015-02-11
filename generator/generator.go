@@ -29,7 +29,7 @@ func Generate(wfile string, pcount int, wcount int) {
 		// add generated page to 'index' page
 		indexBody += "<a href='/view/" + filename + "'>" + filename + "</a><br />\n"
 
-		pContent := ""
+		pContent := "surovo <br/> "
 		for w := 0; w < wcount; w++ {
 			pContent += words[rand.Intn(len(words)-1)] + " "
 		}
